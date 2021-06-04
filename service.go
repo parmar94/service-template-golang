@@ -18,7 +18,9 @@ func (g *Greeter) Start() {
 
 func main() {
 	var service Service = &Greeter{}
+
 	service.Start()
+
 	greeter := service.(*Greeter)
 	fmt.Println(greeter.msg)
 }
