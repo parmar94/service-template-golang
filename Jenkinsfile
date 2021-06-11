@@ -1,3 +1,5 @@
+def ecrLoginPwd = ''
+
 pipeline {   
   agent {
     kubernetes {
@@ -37,19 +39,31 @@ pipeline {
       steps {
         container('imagebuilder') {  
           sh "img build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
-          sh "img tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:$TAG_NAME"
+          sh "img tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
           sh "img ls"
           // sh "docker push vividseats/promo-app:dev"        // which is just connecting to the host docker deaemon
         }
       }
     }
-    // stage('Push Image') {
-    //   steps {
-    //     container('docker') {  
-    //       sh "docker build -t vividseats/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
-    //       sh "docker push vividseats/promo-app:dev"        // which is just connecting to the host docker deaemon
-    //     }
-    //   }
-    // }
+    stage('Push Image') {
+      // when {
+      //   tag '*'
+      // }
+      steps {
+        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          container('awscli') {
+            sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+            sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+            sh "export AWS_DEFAULT_REGION=ap-south-1"
+            ecrLoginPwd = sh(script: 'aws ecr get-login-password', returnStdout: true)
+          }
+        }
+
+        container('imagebuilder') {  
+          sh "img login -u AWS -p ${ecrLoginPwd} ${registry}"
+          sh "img push ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
+        }
+      }
+    }
   }
 }

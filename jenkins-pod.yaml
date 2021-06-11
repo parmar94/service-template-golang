@@ -10,4 +10,7 @@ spec:
       image: r.j3ss.co/img
       command: ["tail", "-f", "/dev/null"]
       imagePullPolicy: Always
-   
+    - name: awscli
+      image: amazon/aws-cli
+      command: ["tail", "-f", "/dev/null"]
+      imagePullPolicy: Always
