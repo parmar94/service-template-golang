@@ -5,7 +5,7 @@ FROM busybox:latest
 #WORKDIR $GOPATH/src/github.com/Smart-Biz-Cloud-Solutions/service-template-golang
 
 # Copy everything from the current directory to the PWD (Present Working Directory) inside the container
-COPY ./service-template-golang .
+COPY service-template-golang .
 
 RUN chmod 744 service-template-golang
 # Download all the dependencies
