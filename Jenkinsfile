@@ -42,7 +42,7 @@ pipeline {
       steps {
         sh 'cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'
         sh "img build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
-        sh "img tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
+        sh "img tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:latest1" //$TAG_NAME"
         sh "img ls"
       }
     }
@@ -55,7 +55,7 @@ pipeline {
           ecrLoginPwd = sh(script: "aws ecr get-login-password", returnStdout: true).trim()
         }
         sh "img login -u AWS -p ${ecrLoginPwd} ${registry}"
-        sh "img push ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
+        sh "img push ${registry}/${SERVICE_NAME}:latest1" //$TAG_NAME"
       }
     }
   }
