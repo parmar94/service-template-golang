@@ -16,7 +16,12 @@ pipeline {
   }   
   stages {       
     stage('Build') {                 
-      steps {               
+      steps {              
+        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+          sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+          sh "export AWS_DEFAULT_REGION=ap-south-1"
+        } 
         // Create our project directory.               
         sh 'cd ${GOPATH}/src'               
         sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
@@ -48,12 +53,8 @@ pipeline {
       //   tag '*'
       // }
       steps {
-        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
-          sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
-          sh "export AWS_DEFAULT_REGION=ap-south-1"
-        }
-        sh 'aws ecr get-login-password | img login -u AWS --password-stdin ${registry}'
+        sh 'pwd=$(aws ecr get-login-password)'
+        sh 'img login -u AWS -p $pwd ${registry}'
         sh "img push ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
       }
     }
