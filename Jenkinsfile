@@ -3,6 +3,7 @@ def ecrLoginPwd = ''
 pipeline {   
   agent {
     kubernetes {
+      label 'jenkins'  // all your pods will be named with this prefix, followed by a unique id
       idleMinutes 5 // how long the pod will live after no jobs have run on it
       yamlFile 'jenkins-pod.yaml'  // path to the pod definition relative to the root of our project 
       defaultContainer 'go-img-builder'  // define a default container if more than a few stages use it, will default to jnlp container
@@ -36,6 +37,7 @@ pipeline {
       //   tag '*'
       // }
       steps {
+        sh "cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}"
         sh "img build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
         sh "img tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
         sh "img ls"
