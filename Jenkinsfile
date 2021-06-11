@@ -35,10 +35,10 @@ pipeline {
       //   tag '*'
       // }
       steps {
-        container('docker') {  
-          sh "docker build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
-          sh "docker tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:$TAG_NAME"
-          sh "docker image ls"
+        container('imagebuilder') {  
+          sh "img build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
+          sh "img tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:$TAG_NAME"
+          sh "img ls"
           // sh "docker push vividseats/promo-app:dev"        // which is just connecting to the host docker deaemon
         }
       }
