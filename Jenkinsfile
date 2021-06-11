@@ -63,7 +63,7 @@ pipeline {
         }
 
         container('imagebuilder') {  
-          sh 'echo "${ecrLoginPwd}" | img login -u AWS --password-stdin ${registry}'
+          sh 'img login -u AWS -p ${ecrLoginPwd} ${registry}'
           sh "img push ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
         }
       }
