@@ -51,8 +51,10 @@ pipeline {
       //   tag '*'
       // }
       steps {
-        sh "password=\$(aws ecr get-login-password)"
-        sh "img login -u AWS -p ${password} ${registry}"
+        script {
+          ecrLoginPwd = sh(script: "aws ecr get-login-password", returnStdout: true).trim()
+        }
+        sh "img login -u AWS -p ${ecrLoginPwd} ${registry}"
         sh "img push ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
       }
     }
