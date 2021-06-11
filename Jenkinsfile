@@ -31,11 +31,12 @@ pipeline {
       }       
     }       
     stage('Build Image') {
-      when {
-        tag '*'
-      }
+      // when {
+      //   tag '*'
+      // }
       steps {
         container('docker') {  
+          sh "curl -L http://www.google.com"
           sh "docker build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
           sh "docker tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:$TAG_NAME"
           sh "docker image ls"
