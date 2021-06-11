@@ -55,7 +55,9 @@ pipeline {
             sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
             sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
             sh "export AWS_DEFAULT_REGION=ap-south-1"
-            ecrLoginPwd = sh(script: 'aws ecr get-login-password', returnStdout: true)
+            script {
+              ecrLoginPwd = aws ecr get-login-password
+            }
           }
         }
 
