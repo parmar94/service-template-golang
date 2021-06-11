@@ -8,57 +8,48 @@ pipeline {
     }
   }
   environment {       
-    //registry = "magalixcorp/k8scicd"       
-    GOCACHE = "/tmp"   
+    registry = "717486009197.dkr.ecr.ap-south-1.amazonaws.com"       
+    GOCACHE = "/tmp"
+    SERVICE_NAME = "service-template-golang"   
   }   
   stages {       
     stage('Build') {                 
       steps {               
         // Create our project directory.               
         sh 'cd ${GOPATH}/src'               
-        sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/service-template-golang'               
+        sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
         // Copy all files in our Jenkins workspace to our project directory.                              
-        sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/service-template-golang'               
+        sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
         // Build the app.               
         sh 'go build'                         
       }           
     }       
     stage('Test') {                    
       steps {                               
-        // Create our project directory.               
-        //sh 'cd ${GOPATH}/src'               
-        //sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/service-template-golang'               
-        // Copy all files in our Jenkins workspace to our project directory.                              
-        //sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/service-template-golang'               
-        // Remove cached test results.               
-        //sh 'go clean -cache'               
-        // Run Unit Tests. 
-        //sh 'cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/service-template-golang'
         sh 'go get github.com/cucumber/godog/cmd/godog'   
         sh 'godog'                      
       }       
     }       
-    // stage('Publish') {           
-    //   environment {               
-    //     registryCredential = 'dockerhub'           
-    //   }           
-    //   steps{               
-    //     script {                   
-    //       def appimage = docker.build registry + ":$BUILD_NUMBER"                   
-    //       docker.withRegistry( '', registryCredential ) {                       
-    //         appimage.push()                       
-    //         appimage.push('latest')                   
-    //       }               
-    //     }           
-    //   }       
-    // }       
-    // stage ('Deploy') {           
-    //   steps {               
-    //     script{                   
-    //       def image_id = registry + ":$BUILD_NUMBER"                   
-    //       sh "ansible-playbook  playbook.yml --extra-vars \"image_id=${image_id}\""               
-    //     }           
-    //   }       
-    // }   
+    stage('Build Image') {
+      when {
+        tag '*'
+      }
+      steps {
+        container('docker') {  
+          sh "docker build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
+          sh "docker tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:$TAG_NAME"
+          sh "docker image ls"
+          // sh "docker push vividseats/promo-app:dev"        // which is just connecting to the host docker deaemon
+        }
+      }
+    }
+    // stage('Push Image') {
+    //   steps {
+    //     container('docker') {  
+    //       sh "docker build -t vividseats/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
+    //       sh "docker push vividseats/promo-app:dev"        // which is just connecting to the host docker deaemon
+    //     }
+    //   }
+    // }
   }
 }
