@@ -37,7 +37,7 @@ pipeline {
       //   tag '*'
       // }
       steps {
-        sh "cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}"
+        sh 'cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'
         sh "img build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
         sh "img tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
         sh "img ls"
