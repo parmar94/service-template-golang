@@ -4,7 +4,7 @@ pipeline {
   agent {
     kubernetes {
       label 'jenkins'  // all your pods will be named with this prefix, followed by a unique id
-      idleMinutes 5 // how long the pod will live after no jobs have run on it
+      idleMinutes 30 // how long the pod will live after no jobs have run on it
       yamlFile 'jenkins-pod.yaml'  // path to the pod definition relative to the root of our project 
       defaultContainer 'golang'  // define a default container if more than a few stages use it, will default to jnlp container
     }
@@ -63,7 +63,7 @@ pipeline {
         }
 
         container('imagebuilder') {  
-          sh "img login -u AWS -p ${ecrLoginPwd} ${registry}"
+          sh 'echo "${ecrLoginPwd}" | img login -u AWS --password-stdin ${registry}'
           sh "img push ${registry}/${SERVICE_NAME}:latest" //$TAG_NAME"
         }
       }
