@@ -20,9 +20,6 @@ pipeline {
           sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
           sh "export AWS_DEFAULT_REGION=ap-south-1"
         }
-        script {
-          ecrLoginPwd = sh(script: "aws ecr get-login-password", returnStdout: true).trim()
-        }
         // Create our project directory.               
         sh 'cd ${GOPATH}/src'               
         sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
@@ -54,8 +51,10 @@ pipeline {
       //   tag '*'
       // }
       steps {
-        sh 'echo ${ecrLoginPwd}'
-        sh 'img login -u AWS -p ${ecrLoginPwd} ${registry}'
+        script {
+          ecrLoginPwd = sh(script: "aws ecr get-login-password", returnStdout: true).trim()
+        }
+        sh "img login -u AWS -p ${ecrLoginPwd} ${registry}"
         sh "img push ${registry}/${SERVICE_NAME}:latest1" //$TAG_NAME"
       }
     }
