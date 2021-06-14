@@ -32,23 +32,14 @@ pipeline {
       }       
     }       
     stage('Build & Push Image') {
-      // when {
-      //   tag '*'
-      // }
+      when { 
+        branch "v*.*"
+      }
       steps {
         sh 'cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'
-        // withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-        //   sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
-        //   sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
-        //   sh "export AWS_DEFAULT_REGION=ap-south-1"
-        // }
-        // script {
-        //   ecrLoginPwd = sh(script: "aws ecr get-login-password --region ap-south-1", returnStdout: true).trim()
-        // }
         sh "aws ecr get-login-password --region ap-south-1 | img login -u AWS --password-stdin  ${registry}" //-p ${ecrLoginPwd}
-        sh "img build -t ${registry}/${SERVICE_NAME}:${GIT_COMMIT} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
-        //sh "img tag ${SERVICE_NAME} ${SERVICE_NAME}" //$TAG_NAME"
-        sh "img push ${registry}/${SERVICE_NAME}:${GIT_COMMIT}" //$TAG_NAME"
+        sh "img build -t ${registry}/${SERVICE_NAME}:${GIT_LOCAL_BRANCH} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
+        sh "img push ${registry}/${SERVICE_NAME}:${GIT_LOCAL_BRANCH}" //$TAG_NAME"
       }
     }
   }
