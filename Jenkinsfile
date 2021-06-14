@@ -54,7 +54,7 @@ pipeline {
         script {
           ecrLoginPwd = sh(script: "aws ecr get-login-password", returnStdout: true).trim()
         }
-        sh "img login -u AWS -p \"${ecrLoginPwd}\" ${registry}"
+        sh 'img login -u AWS -p "${ecrLoginPwd}" ${registry}'
         sh "img push ${registry}/${SERVICE_NAME}:latest1" //$TAG_NAME"
       }
     }
