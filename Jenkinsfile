@@ -3,8 +3,8 @@ def ecrLoginPwd = ''
 pipeline {   
   agent {
     kubernetes {
-      yamlFile 'jenkins-pod.yaml'  // path to the pod definition relative to the root of our project 
-      defaultContainer 'go-img-builder'  // define a default container if more than a few stages use it, will default to jnlp container
+      yamlFile 'jenkins-pod.yaml'  // test & builder pod config
+      defaultContainer 'go-img-builder'  // define a default container 
     }
   }
   environment {       
@@ -15,7 +15,6 @@ pipeline {
   stages {       
     stage('Build') {                 
       steps {              
-     
         // Create our project directory.               
         sh 'cd ${GOPATH}/src'               
         sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
@@ -26,7 +25,8 @@ pipeline {
       }           
     }       
     stage('Test') {                    
-      steps {                               
+      steps {              
+        // BDD test                 
         sh 'go get github.com/cucumber/godog/cmd/godog'   
         sh 'godog'                      
       }       
@@ -36,6 +36,7 @@ pipeline {
         branch "v*.*"
       }
       steps {
+        // build and publish release
         sh 'cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'
         sh "aws ecr get-login-password --region ap-south-1 | img login -u AWS --password-stdin  ${registry}" //-p ${ecrLoginPwd}
         sh "img build -t ${registry}/${SERVICE_NAME}:${GIT_LOCAL_BRANCH} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
