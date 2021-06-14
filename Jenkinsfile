@@ -37,11 +37,11 @@ pipeline {
       // }
       steps {
         sh 'cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'
-        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
-          sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
-          sh "export AWS_DEFAULT_REGION=ap-south-1"
-        }
+        // withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+        //   sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+        //   sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+        //   sh "export AWS_DEFAULT_REGION=ap-south-1"
+        // }
         // script {
         //   ecrLoginPwd = sh(script: "aws ecr get-login-password --region ap-south-1", returnStdout: true).trim()
         // }
