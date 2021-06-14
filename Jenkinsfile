@@ -15,11 +15,7 @@ pipeline {
   stages {       
     stage('Build') {                 
       steps {              
-        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
-          sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
-          sh "export AWS_DEFAULT_REGION=ap-south-1"
-        }
+     
         // Create our project directory.               
         sh 'cd ${GOPATH}/src'               
         sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
@@ -35,26 +31,23 @@ pipeline {
         sh 'godog'                      
       }       
     }       
-    stage('Build Image') {
+    stage('Build & Push Image') {
       // when {
       //   tag '*'
       // }
       steps {
         sh 'cd ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'
-        sh "img build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
-        sh "img tag ${SERVICE_NAME}:latest ${registry}/${SERVICE_NAME}:latest1" //$TAG_NAME"
-        sh "img ls"
-      }
-    }
-    stage('Push Image') {
-      // when {
-      //   tag '*'
-      // }
-      steps {
+        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'jenkins-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+          sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+          sh "export AWS_DEFAULT_REGION=ap-south-1"
+        }
         script {
           ecrLoginPwd = sh(script: "aws ecr get-login-password --region ap-south-1", returnStdout: true).trim()
         }
         sh "img login -u AWS -p ${ecrLoginPwd} ${registry}"
+        sh "img build -t ${SERVICE_NAME} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
+        sh "img tag ${SERVICE_NAME} ${registry}/${SERVICE_NAME}:latest1" //$TAG_NAME"
         sh "img push ${registry}/${SERVICE_NAME}:latest1" //$TAG_NAME"
       }
     }
