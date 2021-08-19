@@ -1,11 +1,7 @@
 def ecrLoginPwd = ''
 
 pipeline {   
-  agent {
-    docker {
-      image "717486009197.dkr.ecr.ap-south-1.amazonaws.com/go-img-builder:v0.2"  // define a default container 
-    }
-  }
+  agent any
   environment {       
     registry = "717486009197.dkr.ecr.ap-south-1.amazonaws.com"       
     GOCACHE = "/tmp"
