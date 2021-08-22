@@ -2,9 +2,9 @@ def ecrLoginPwd = ''
 
 pipeline {   
   agent {
-    kubernetes {
-      yamlFile 'jenkins-pod.yaml'  // test & builder pod config
-      defaultContainer 'go-img-builder'  // define a default container 
+    docker {
+      alwaysPull true
+      image '717486009197.dkr.ecr.ap-south-1.amazonaws.com/go-img-builder:v0.2'
     }
   }
   environment {       
