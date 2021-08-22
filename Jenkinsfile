@@ -17,7 +17,7 @@ pipeline {
       //}
       steps {
         // build and publish release
-        sh "password=\$(docker run --rm -it amazon/aws-cli ecr get-login-password --region ap-south-1)"
+        sh "password=\$(docker run --rm -i amazon/aws-cli ecr get-login-password --region ap-south-1)"
         sh "docker login -u AWS -p $password   ${registry}"
         sh 'docker build -t ${registry}/${SERVICE_NAME}:${GIT_LOCAL_BRANCH} .'
         sh "docker push ${registry}/${SERVICE_NAME}:${GIT_LOCAL_BRANCH}" //$TAG_NAME"
