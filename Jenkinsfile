@@ -23,7 +23,7 @@ pipeline {
         sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'   
         // BDD test
         sh 'go get github.com/cucumber/godog/cmd/godog'   
-        sh 'godog
+        sh 'godog'
         // Build the app.               
         sh 'go build -o $HOME/build/${SERVICE_NAME}'                         
       }           
