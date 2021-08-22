@@ -3,7 +3,9 @@ def ecrLoginPwd = ''
 pipeline {   
   agent {
     docker {
+      alwaysPull true
       image '717486009197.dkr.ecr.ap-south-1.amazonaws.com/go-img-builder:v0.2'
+      registryUrl 'https://717486009197.dkr.ecr.ap-south-1.amazonaws.com'
     }
   }
   environment {       
