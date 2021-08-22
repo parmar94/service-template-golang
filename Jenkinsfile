@@ -11,17 +11,8 @@ pipeline {
     stage('Test & Build') { 
       steps {              
         // Create our project directory.
-        sh 'docker run --rm -v "$PWD":/usr/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME} -w /usr/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME} golang:1.16 go build -v'
-        //sh 'cd ${GOPATH}/src'               
-        //sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
-        // Copy all files in our Jenkins workspace to our project directory.                              
-        //sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'   
-        // BDD test
-        //sh 'go get github.com/cucumber/godog/cmd/godog'   
-        //sh 'godog'
-        // Build the app.               
-        //sh 'go build -o /build/${SERVICE_NAME}'           
-        sh 'ls'
+        sh 'docker run --rm -v "$PWD":/usr/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME} -w /usr/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME} golang:1.16 go build -v'       
+        sh './${SERVICE_NAME}'
       }           
     }              
     stage('Build & Push Image') {
