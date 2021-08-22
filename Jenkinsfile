@@ -12,7 +12,7 @@ pipeline {
       agent {
         docker {
           image 'golang:1.6'
-          args '-v $HOME/build:$HOME/build'
+          args '-v $HOME/build:/build'
         }
       }
       steps {              
@@ -25,7 +25,7 @@ pipeline {
         //sh 'go get github.com/cucumber/godog/cmd/godog'   
         //sh 'godog'
         // Build the app.               
-        sh 'go build -o $HOME/build/${SERVICE_NAME}'                         
+        sh 'go build -o /build/${SERVICE_NAME}'                         
       }           
     }              
     stage('Build & Push Image') {
