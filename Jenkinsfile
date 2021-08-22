@@ -11,7 +11,7 @@ pipeline {
     stage('Test & Build') { 
       agent {
         docker {
-          image 'go:1.6'
+          image 'golang:1.6'
           args '-v $HOME/build:$HOME/build'
         }
       }
