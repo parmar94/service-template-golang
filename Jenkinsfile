@@ -1,37 +1,33 @@
 def ecrLoginPwd = ''
 
 pipeline {   
-  agent {
-    docker {
-      alwaysPull true
-      image '717486009197.dkr.ecr.ap-south-1.amazonaws.com/go-img-builder:v0.2'
-      args '-u root'
-    }
-  }
+  agent any
   environment {       
     registry = "717486009197.dkr.ecr.ap-south-1.amazonaws.com"       
     GOCACHE = "/tmp"
     SERVICE_NAME = "service-template-golang"   
   }   
   stages {       
-    stage('Build') {                 
+    stage('Test & Build') { 
+      agent {
+        docker {
+          image 'go:1.6'
+          args '-v $HOME/build:$HOME/build'
+        }
+      }
       steps {              
         // Create our project directory.               
         sh 'cd ${GOPATH}/src'               
         sh 'mkdir -p ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
         // Copy all files in our Jenkins workspace to our project directory.                              
-        sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'               
-        // Build the app.               
-        sh 'go build'                         
-      }           
-    }       
-    stage('Test') {                    
-      steps {              
-        // BDD test                 
+        sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/github.com/Smart-Biz-Cloud-Solutions/${SERVICE_NAME}'   
+        // BDD test
         sh 'go get github.com/cucumber/godog/cmd/godog'   
-        sh 'godog'                      
-      }       
-    }       
+        sh 'godog
+        // Build the app.               
+        sh 'go build -o $HOME/build/${SERVICE_NAME}'                         
+      }           
+    }              
     stage('Build & Push Image') {
       when { 
         branch "v*.*"
