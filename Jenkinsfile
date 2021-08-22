@@ -4,8 +4,6 @@ pipeline {
   agent {
     docker {
       alwaysPull true
-      registryUrl 'https://717486009197.dkr.ecr.ap-south-1.amazonaws.com'
-      registryCredentialsId 'ecr:ap-south-1:aws'
       image '717486009197.dkr.ecr.ap-south-1.amazonaws.com/go-img-builder:v0.2'
     }
   }
