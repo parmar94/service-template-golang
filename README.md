@@ -1,2 +1,2 @@
 # service-template-golang
-GoLang  Service template (BDD + DevOps + Docker)
+GoLang  Service template (BDD + Docker)
